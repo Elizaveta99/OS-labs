@@ -1,12 +1,13 @@
 #pragma once
 
+DWORD WINAPI CalculatePolynom(LPVOID polynom);
+
 CONST DWORD maxSize = 100;
 
 struct Polynom
 {
-	DWORD degreeNum;
-	DWORD degreeDen;
+	DWORD degree;
 	DWORD x;
 	DWORD value;
-	DWORD coefNum[maxSize], coefDen[maxSize];
+	DWORD coef[maxSize];
 };

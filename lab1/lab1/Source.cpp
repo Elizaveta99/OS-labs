@@ -4,49 +4,49 @@
 
 using namespace std;
 
-//volatile int n;
-
-DWORD WINAPI CalculatePolynom(LPVOID iNum)
-{
-	cout << "Thread is started." << endl;
-	n = n + (int)iNum;
-	cout << "Thread is finished." << endl;
-
-	return 0;
-}
-
 int main()
 {
-	Polynom polynom;
-	//int degreeNum,
-		//degreeDen;
-	cout << "Enter degree of polynom in numerator\n";
-	cin >> polynom.degreeNum;
-	cout << "Enter coefficients of polynom in numerator\n";
-	for (int i = 0; i < polynom.degreeNum; i++)
-		cin >> polynom.coefNum[i];
-	cout << "Enter degree of polynom in denominator\n";
-	cin >> polynom.degreeDen;
-	cout << "Enter coefficients of polynom in denominator\n";
-	for (int i = 0; i < polynom.degreeDen; i++)
-		cin >> polynom.coefDen[i];
+	Polynom polynomNum;
+	Polynom polynomDen;
+	cout << "Enter degree of polynom in numerator" << endl;
+	cin >> polynomNum.degree;
+	cout << "Enter coefficients of polynom in numerator" << endl;
+	for (int i = 0; i <= polynomNum.degree; i++)
+		cin >> polynomNum.coef[i];
+	cout << "Enter degree of polynom in denominator" << endl;
+	cin >> polynomDen.degree;
+	cout << "Enter coefficients of polynom in denominator" << endl;
+	for (int i = 0; i <= polynomDen.degree; i++)
+		cin >> polynomDen.coef[i];
+	cout << "Enter value of variable x" << endl;
+	cin >> polynomNum.x;
+	polynomDen.x = polynomNum.x;
+	polynomNum.value = 0;
+	polynomDen.value = 0;
 
-	int	inc = 10;
-	HANDLE	hThread;
-	DWORD	IDThread;
-
-	cout << "n = " << n << endl;
-
-	hThread = CreateThread(NULL, 0, Polynom, (void*)inc, 0, &IDThread);
-	if (hThread == NULL)
+	HANDLE	hThreadFirst;
+	HANDLE	hThreadSecond;
+	DWORD	IDThreadFirst;
+	DWORD	IDThreadSecond;
+	hThreadFirst = CreateThread(NULL, 0, CalculatePolynom, &polynomNum, 0, &IDThreadFirst);  //???
+	if (hThreadFirst == NULL)
 		return GetLastError();
 
-	// ждем пока поток Add закончит работу
-	WaitForSingleObject(hThread, INFINITE);
-	// закрываем дескриптор потока
-	CloseHandle(hThread);
+	WaitForSingleObject(hThreadFirst, INFINITE); // ?? parallel
+	CloseHandle(hThreadFirst);
 
-	cout << "n = " << n << endl;
+	hThreadSecond = CreateThread(NULL, 0, CalculatePolynom, &polynomDen, 0, &IDThreadSecond);  //???
+	if (hThreadSecond == NULL)
+		return GetLastError();
 
+	// ждем, пока потоки закончат работу
+	
+	WaitForSingleObject(hThreadSecond, INFINITE);
+
+	cout << "f(" << polynomNum.x << ")=" << polynomNum.value << "/" << polynomDen.value << endl;
+
+	// закрываем дескрипторы потоков
+	//CloseHandle(hThreadFirst);
+	CloseHandle(hThreadSecond);
 	return 0;
 }
