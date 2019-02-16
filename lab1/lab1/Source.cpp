@@ -23,30 +23,21 @@ int main()
 	polynomDen.x = polynomNum.x;
 	polynomNum.value = 0;
 	polynomDen.value = 0;
-
+	
 	HANDLE	hThreadFirst;
 	HANDLE	hThreadSecond;
 	DWORD	IDThreadFirst;
 	DWORD	IDThreadSecond;
 	hThreadFirst = CreateThread(NULL, 0, CalculatePolynom, &polynomNum, 0, &IDThreadFirst);  //???
-	if (hThreadFirst == NULL)
-		return GetLastError();
-
-	WaitForSingleObject(hThreadFirst, INFINITE); // ?? parallel
-	CloseHandle(hThreadFirst);
-
 	hThreadSecond = CreateThread(NULL, 0, CalculatePolynom, &polynomDen, 0, &IDThreadSecond);  //???
-	if (hThreadSecond == NULL)
-		return GetLastError();
-
-	// ждем, пока потоки закончат работу
 	
+	// ждем, пока потоки закончат работу
+	WaitForSingleObject(hThreadFirst, INFINITE);
 	WaitForSingleObject(hThreadSecond, INFINITE);
 
-	cout << "f(" << polynomNum.x << ")=" << polynomNum.value << "/" << polynomDen.value << endl;
-
+	printf("f(%d)=%d/%d\n", polynomNum.x, polynomNum.value, polynomDen.value);
 	// закрываем дескрипторы потоков
-	//CloseHandle(hThreadFirst);
+	CloseHandle(hThreadFirst);
 	CloseHandle(hThreadSecond);
 	return 0;
 }
