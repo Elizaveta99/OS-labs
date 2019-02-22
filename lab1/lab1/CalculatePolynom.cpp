@@ -8,7 +8,7 @@ DWORD WINAPI CalculatePolynom(LPVOID polynom)
 {
 	Polynom* pol = (Polynom*)polynom;
 	int xDegree = 1; 
-	for (int i = (*pol).degree; i > -1 ; i--) // ?? int ?? order?
+	for (int i = (*pol).degree; i > -1 ; i--) 
 	{
 		(*pol).value += (*pol).coef[i] * xDegree;
 		xDegree *= (*pol).x;

@@ -1,7 +1,5 @@
 #pragma once
 
-DWORD WINAPI CalculatePolynom(LPVOID polynom);
-
 const int maxSize = 100;
 
 struct Polynom
