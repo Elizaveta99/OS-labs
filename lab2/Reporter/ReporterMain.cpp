@@ -2,38 +2,43 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "C:\Users\User\Desktop\1studing\OS\labs\OS-labs\lab2\Creator\TaxPayment.h"
+#include "TaxPayment.h"
 
 using namespace std;
 
-int main(int argc, char* args) // ?? argc - always?
+int main(int argc, char* args) 
 {
-	int* tempArr;
-	tempArr = new int[]; //??how
-	double value = stod(args[3], );
+	setlocale(LC_ALL, "Russian");
 
+	cout << "Отчёт по файлу \" " << args[1] << "\"\n";
+	cout << "Список компаний, налоговые платежи которых " << args[4] << " " << args[3] << "\n";
+
+	ofstream fout((char*)args[2]);
+	size_t offset = 0;
+	double value = stod((char*)args[3], &offset);
 	ifstream fin((char*)args[1], ios::binary);
 	TaxPayment tax;
 	while (fin)
 	{
+		//fin.read((char*)&tax, sizeof(tax)); ??
 		fin.read((char*)&tax.num, sizeof(tax.num));
 		fin.read((char*)&tax.name, sizeof(tax.name));
 		fin.read((char*)&tax.sum, sizeof(tax.sum));
-
-		if ()
+		if (args[4] == '<')
+		{
+			if (tax.sum < value)
+				fout << tax.num << ' ' << tax.name << ' ' << tax.sum << "\n"; // fout.write() ??
+		}
+		else
+		{
+			if (tax.sum > value)
+				fout << tax.num << ' ' << tax.name << ' ' << tax.sum << "\n";
+		}
 	}
-	
+	fout << "\n";
 
-	//text file
-	ofstream fout((char*)args[2]); //??[1] - if without argc?
+	fin.close();
+	fout.close(); 
 
-	int sz = (int)args[2];
-	while (sz--)
-	{
-		cin >> tax.name >> tax.num >> tax.sum;
-		fout.write((char*)&tax, sizeof(tax)); //??
-	}
-
-	fout.close(); //?
 	return 0;
 }
