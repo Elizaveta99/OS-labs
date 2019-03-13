@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int main(int argc, char* args) 
+int main(int argc, char** args) 
 {
 	setlocale(LC_ALL, "Russian");
 
@@ -18,14 +18,26 @@ int main(int argc, char* args)
 	double value = stod((char*)args[3], &offset);
 	ifstream fin((char*)args[1], ios::binary);
 	TaxPayment tax;
-	while (fin)
+
+	cout << "val = \n" << value << "\n";
+	/*system("pause");
+	return 0;*/
+
+	while (true)
 	{
+		cout << "????????\n";
 		//fin.read((char*)&tax, sizeof(tax)); ??
-		fin.read((char*)&tax.num, sizeof(tax.num));
+		if (!fin.read((char*)&tax.num, sizeof(tax.num)))
+			break;
+		//fin.read((char*)&tax.num, sizeof(tax.num));
 		fin.read((char*)&tax.name, sizeof(tax.name));
 		fin.read((char*)&tax.sum, sizeof(tax.sum));
-		if (args[4] == '<')
+
+		
+
+		if (strcmp(args[4], "<") == 0)
 		{
+//printf(args[4], "\n");
 			if (tax.sum < value)
 				fout << tax.num << ' ' << tax.name << ' ' << tax.sum << "\n"; // fout.write() ??
 		}
@@ -35,10 +47,12 @@ int main(int argc, char* args)
 				fout << tax.num << ' ' << tax.name << ' ' << tax.sum << "\n";
 		}
 	}
-	fout << "\n";
 
 	fin.close();
 	fout.close(); 
+
+
+//	system("pause");
 
 	return 0;
 }
