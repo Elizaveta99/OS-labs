@@ -6,9 +6,9 @@
 
 using namespace std;
 
-int main(int argc, char* args) // ?? argc - always?
+int main(int argc, char* args) 
 {
-	ofstream fout((char*)args[1], ios::out | ios::binary); //??[1]
+	ofstream fout((char*)args[1], ios::out | ios::binary); // ios::out ??
 	TaxPayment tax;
 
 	cout << "Records of the binary file :\n";
@@ -16,9 +16,10 @@ int main(int argc, char* args) // ?? argc - always?
 	while (sz--) 
 	{
 		cin >> tax.name >> tax.num >> tax.sum;
-		fout.write((char*)&tax, sizeof(tax)); //??
+		fout.write((char*)&tax, sizeof(tax)); //?? or 3 fout ?
 	}
 
-	fout.close(); //?
+	fout.close(); 
+
 	return 0;
 }
