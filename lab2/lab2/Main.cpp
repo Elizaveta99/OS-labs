@@ -18,7 +18,7 @@ int main()
 
 	string lpszAppName = "Creator.exe"; 
 	STARTUPINFO si;
-	PROCESS_INFORMATION piCreator;
+	PROCESS_INFORMATION piCreator; 
 	ZeroMemory(&si, sizeof(STARTUPINFO));
 	si.cb = sizeof(STARTUPINFO);
 
@@ -34,7 +34,6 @@ int main()
 		//DWORD dw = GetLastError(); //??
 		//return dw;
 	}
-	cout << "The new process Creator.exe is created.\n";
 	
 	// ждем завершения созданного процесса
 	WaitForSingleObject(piCreator.hProcess, INFINITE);
@@ -80,7 +79,6 @@ int main()
 		//DWORD dw = GetLastError(); //??
 		//return dw;
 	}
-	cout << "The new process Reporter.exe is created.\n";
 
 	// ждем завершения созданного прцесса
 	WaitForSingleObject(piReporter.hProcess, INFINITE);
@@ -94,12 +92,11 @@ int main()
 	string temp_s;
 
 	while (getline(fin_txt, temp_s))
-	{
-			cout << temp_s << "\n";
-	}
+		cout << temp_s << "\n";
 
 	fin_bin.close();
 	fin_txt.close();
 
+	system("pause");
 	return 0;
 }
