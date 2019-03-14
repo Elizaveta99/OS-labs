@@ -18,7 +18,7 @@ int main(int argc, char** args)
 	TaxPayment tax;
 
 	fout << "Отчёт по файлу \"" << args[1] << "\"\n";
-	fout << "Список компаний, налоговые платежи которых " << args[4] << " " << setprecision(5) << fixed << args[3];
+	fout << "Список компаний, налоговые платежи которых " << args[4] << " " << setprecision(5) << fixed << args[3] << "\n";
 
 	bool flag = false;
 	while (true)
@@ -45,6 +45,9 @@ int main(int argc, char** args)
 
 	fin.close();
 	fout.close(); 
+
+	cout << "Reporter works\n";
+	system("pause");
 
 	return 0;
 }
