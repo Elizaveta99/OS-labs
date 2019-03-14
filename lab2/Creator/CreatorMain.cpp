@@ -25,5 +25,8 @@ int main(int argc, char** args)
 
 	fout.close(); 
 
+	cout << "Creator works\n";
+	system("pause");
+
 	return 0;
 }
