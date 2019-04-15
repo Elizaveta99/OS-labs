@@ -1,0 +1,6 @@
+﻿  Consumer.cpp
+  Main.cpp
+c:\users\user\desktop\1studing\os\labs\os-labs\lab4\lab4\main.cpp(46): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'HANDLE'
+  Producer.cpp
+  Generating Code...
+  lab4.vcxproj -> C:\Users\User\Desktop\1studing\OS\labs\OS-labs\lab4\Debug\lab4.exe

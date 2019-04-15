@@ -1,0 +1,4 @@
+﻿  Consumer.cpp
+Main.obj : error LNK2005: "char * canStartEventConsumer" (?canStartEventConsumer@@3PADA) already defined in Consumer.obj
+Producer.obj : error LNK2005: "char * canStartEventProducer" (?canStartEventProducer@@3PADA) already defined in Main.obj
+C:\Users\User\Desktop\1studing\OS\labs\OS-labs\lab4\Release\lab4.exe : fatal error LNK1169: one or more multiply defined symbols found
