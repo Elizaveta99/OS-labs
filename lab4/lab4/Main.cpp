@@ -35,34 +35,39 @@ int main()
 	IDThreadProducer = new DWORD[producer_threads];
 	IDThreadConsumer = new DWORD[consumer_threads];
 
-	for (int i = 0; i < min(producer_threads, consumer_threads); i++) // ??
-	{
-		string name = readyForWorkEvent + to_string(i);
-		char* name_c = const_cast<char*>(name.c_str());
-		queue.setReadyForWorkEvent(name_c);
-		queue.numberOfThread = i + 1;
+	HANDLE hCanStartEventProducer = CreateEvent(NULL, FALSE, FALSE, canStartEventProducer);
+	if (hCanStartEventProducer == NULL)
+		return GetLastError();
+	HANDLE hCanStartEventConsumer = CreateEvent(NULL, FALSE, FALSE, canStartEventConsumer);
+	if (hCanStartEventConsumer == NULL)
+		return GetLastError();
 
-		HANDLE hReadyForWorkEvent = CreateEvent(NULL, FALSE, FALSE, name_c);
-		//cout << "Handle1 : " << hReadyForWorkEvent << "\n";
-		printf("Handle1 : %d\n", hReadyForWorkEvent);
-		//cout << "name_main_produser : " << name_c << "\n";
-		printf("name_main_produser : %s\n", name_c);
-		if (hReadyForWorkEvent == NULL)
+	for (int i = 0; i < producer_threads; i++) 
+	{
+		string temp = "Producer";
+		string producer_name = readyForWorkEvent + temp + to_string(i);
+		char* producer_name_c = const_cast<char*>(producer_name.c_str());
+		queue.setReadyForWorkEvent(producer_name_c);
+		queue.numberOfThread = i + 1;
+		HANDLE hReadyForWorkEventProducer = CreateEvent(NULL, FALSE, FALSE, producer_name_c);
+		printf("Handle1 : %d\n", hReadyForWorkEventProducer);
+		//printf("name_main_produser : %s\n", producer_name_c);
+		if (hReadyForWorkEventProducer == NULL)
 			return GetLastError();
 		hThreadProducer[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Producer, &queue, 0, &IDThreadProducer[i]);
-		WaitForSingleObject(hReadyForWorkEvent, INFINITE);
-		CloseHandle(hReadyForWorkEvent);
+		WaitForSingleObject(hReadyForWorkEventProducer, INFINITE);
+		CloseHandle(hReadyForWorkEventProducer);
 
-		// такое же имя - будет работать?
-		hReadyForWorkEvent = CreateEvent(NULL, FALSE, FALSE, name_c);
-		if (hReadyForWorkEvent == NULL)
+		temp = "Consumer";
+		string consumer_name = readyForWorkEvent + temp + to_string(i);
+		char* consumer_name_c = const_cast<char*>(consumer_name.c_str());
+		queue.setReadyForWorkEvent(consumer_name_c);
+		HANDLE hReadyForWorkEventConsumer = CreateEvent(NULL, FALSE, FALSE, consumer_name_c);
+		if (hReadyForWorkEventConsumer == NULL)
 			return GetLastError();
 		hThreadConsumer[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Consumer, &queue, 0, &IDThreadConsumer[i]);
-		WaitForSingleObject(hReadyForWorkEvent, INFINITE);
-		CloseHandle(hReadyForWorkEvent);
-
-		/*wait_array_producer[event_amount] = hReadyForWorkEvent;
-		wait_array_consumer[event_amount] = hReadyForWorkEvent;*/
+		WaitForSingleObject(hReadyForWorkEventConsumer, INFINITE);
+		CloseHandle(hReadyForWorkEventConsumer);
 	}
 
 	// если здесь, то дождались сигнала на готовность от всех producer и consumer
@@ -71,31 +76,32 @@ int main()
 	if (hSemaphores != -1)
 		return hSemaphores;
 
-	HANDLE hCanStartEventProducer = CreateEvent(NULL, FALSE, FALSE, canStartEventProducer);
-	if (hCanStartEventProducer == NULL)
-		return GetLastError();
+	//cout << "SetEvent(hCanStartEventProducer)!!!!!!!!\n";
+
 	SetEvent(hCanStartEventProducer); // всем установилось?
 	CloseHandle(hCanStartEventProducer);
 
-	HANDLE hCanStartEventConsumer = CreateEvent(NULL, FALSE, FALSE, canStartEventConsumer);
-	if (hCanStartEventConsumer == NULL)
-		return GetLastError();
-	SetEvent(hCanStartEventConsumer); // всем установилось?
+	SetEvent(hCanStartEventConsumer);
+	/*for (int i = 0; i <  consumer_threads; i++)
+		SetEvent(hCanStartEventConsumer);*/
 	CloseHandle(hCanStartEventConsumer);
 
-	//for (int i = 0; i < min(producer_threads, consumer_threads); i++) // ??
-	//{ }
 
 	for (int i = 0; i < producer_threads; i++)
 	{
 		WaitForSingleObject(hThreadProducer[i], INFINITE);
+		WaitForSingleObject(hThreadConsumer[i], INFINITE);
+		CloseHandle(hThreadConsumer[i]);
 		CloseHandle(hThreadProducer[i]);
 	}
-	for (int i = 0; i < consumer_threads; i++)
+	//cout << "!!!!!!!!!!!!!!!SetEvent(hCanStartEventProducer)!!!!!!!!\n";
+
+
+	/*for (int i = 0; i < consumer_threads; i++)
 	{
 		WaitForSingleObject(hThreadConsumer[i], INFINITE);
 		CloseHandle(hThreadConsumer[i]);
-	}
+	}*/
 	delete[] hThreadProducer;
 	delete[] hThreadConsumer;
 

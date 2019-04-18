@@ -8,54 +8,50 @@
 
 using namespace std;
 
-CHAR canStartEventProducer[] = "CanStartEventProducer";
-
 DWORD WINAPI Producer(SynqQueue *queue) 
 {
-	//cout << "Amount and value of produced numbers by Producer #" << (*queue).numberOfThread << " : ";
+	CHAR canStartEventProducer[] = "CanStartEventProducer";
 	printf("Amount and value of produced numbers by Producer #%d : ", (*queue).numberOfThread);
 	int amount, value;
 	cin >> amount >> value;
 
 	// открытие события для отправки Main сигнала на готовность к работе
 	//cout << "name_producer : " << (*queue).getReadyForWorkEvent() << "\n";
-	printf("name_producer : %s\n", (*queue).getReadyForWorkEvent());
-	HANDLE hReadyForWorkEvent = OpenEvent(EVENT_ALL_ACCESS, FALSE, (*queue).getReadyForWorkEvent());
-	if (hReadyForWorkEvent == NULL)
+	//printf("name_producer : %s\n", (*queue).getReadyForWorkEvent());
+	HANDLE hReadyForWorkEventProducer = OpenEvent(EVENT_ALL_ACCESS, FALSE, (*queue).getReadyForWorkEvent());
+	if (hReadyForWorkEventProducer == NULL)
 	{
-		cout << "Open event failed producer." << endl;
-		//cout << "Input any char to exit.\n" << endl;
+		cout << "Open event failed. Input any char to exit.\n" << endl;
 		char c;
 		cin >> c;
 		return GetLastError();
 	}
 
-	SetEvent(hReadyForWorkEvent);					// послали сигнал о своей готовности
-	CloseHandle(hReadyForWorkEvent);   // ?? здесь?
+	SetEvent(hReadyForWorkEventProducer);					// послали сигнал о своей готовности
+	CloseHandle(hReadyForWorkEventProducer);   
 
 	HANDLE hCanStartEventProducer = OpenEvent(EVENT_ALL_ACCESS, FALSE, canStartEventProducer);
 	if (hCanStartEventProducer == NULL)
 	{
-		cout << "Open event failed pr start." << endl;
-		//cout << "Input any char to exit." << endl;
+		cout << "Open event failed start. Input any char to exit.\n" << endl;
 		char c;
 		cin >> c;
 		return GetLastError();
 	}
+	//cout << "??????????WaitForSingleObject(hCanStartEventProducer\n";
 	WaitForSingleObject(hCanStartEventProducer, INFINITE);	// ждём сигнал на начало работы
 
 	CRITICAL_SECTION *cs = (*queue).getCriticalSection();
-	EnterCriticalSection(cs);  // правильно ли адрес беру?
+	EnterCriticalSection(cs);  
+	//cout << "AfterSetEventCanWork!!!\n";
 	for (int i = 0; i < amount; i++)
 	{
+		cout << "Produced number : " << value << "\n";
 		(*queue).insert(value);
-		//cout << "Produced number : " << value << "\n";
-		printf("Produced number : %d\n", value);
 		Sleep(15);
 	}
 	LeaveCriticalSection(cs);
-
-	cout << "Producer \n";
+	//cout << "AfterSetEventCanWork222222222!!!\n";
 	CloseHandle(hCanStartEventProducer);
 
 	return 0;
