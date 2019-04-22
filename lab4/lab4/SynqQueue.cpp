@@ -3,53 +3,58 @@
 
 SynqQueue::SynqQueue()
 {
+	beg_pos = 0;
+	end_pos = 0;
+	count = 0;
 }
 
 SynqQueue::~SynqQueue()
 {
-	std::cout << "Dectructor\n";
-	DeleteCriticalSection(&cs);
 	CloseHandle(hSemaphoreProduce);
 	CloseHandle(hSemaphoreConsume);
-	delete[] readyForWorkEvent;
 	delete queue;
 }
 
 void SynqQueue::insert(int value)
 {
+	//LeaveCriticalSection(&cs);
 	WaitForSingleObject(hSemaphoreProduce, INFINITE);
+	EnterCriticalSection(&cs);
 	if (count == size)										// очередь заполнена
 	{
-		std::cout << "OOps!\n";
-		LeaveCriticalSection(&cs);
+		//LeaveCriticalSection(&cs);
 		WaitForSingleObject(hSemaphoreConsume, INFINITE);
-		EnterCriticalSection(&cs);
+		//EnterCriticalSection(&cs);
 	}
 	else
 		if (end_pos > size - 1)
 			end_pos = 0;	
 	queue[end_pos++] = value;
 	count++;
+	std::cout << "Produced number : " << value << "\n";
+			LeaveCriticalSection(&cs);
 	ReleaseSemaphore(hSemaphoreConsume, 1, NULL);
-	LeaveCriticalSection(&cs);
 }
 
 int SynqQueue::remove()
 {
+	//LeaveCriticalSection(&cs);
 	WaitForSingleObject(hSemaphoreConsume, INFINITE);
+	EnterCriticalSection(&cs);
 	if (count == 0)											// очередь пуста
 	{
-		LeaveCriticalSection(&cs);
+		//LeaveCriticalSection(&cs);
 		WaitForSingleObject(hSemaphoreProduce, INFINITE);
-		EnterCriticalSection(&cs);
+		//EnterCriticalSection(&cs);
 	}
 	else
 		if (beg_pos > size - 1)
 			beg_pos = 0;
 	int value = queue[beg_pos++];
 	count--;
+	std::cout << "Consumed number : " << value << "\n";
+			LeaveCriticalSection(&cs);
 	ReleaseSemaphore(hSemaphoreProduce, 1, NULL);
-	LeaveCriticalSection(&cs);
 	return value;
 }
 
@@ -79,6 +84,11 @@ void SynqQueue::initializeCriticalSection()
 	InitializeCriticalSection(&cs);
 }
 
+void SynqQueue::deleteCriticalSection()
+{
+	DeleteCriticalSection(&cs);
+}
+
 CRITICAL_SECTION* SynqQueue::getCriticalSection()
 {
 	return &cs;
@@ -86,7 +96,7 @@ CRITICAL_SECTION* SynqQueue::getCriticalSection()
 
 int SynqQueue::createSemaphores()
 {
-	hSemaphoreConsume = CreateSemaphore(NULL, 0, size, "SemaphoreConsume");
+	hSemaphoreConsume = CreateSemaphore(NULL, 0, size, "SemaphoreConsume"); 
 	if (hSemaphoreConsume == NULL)
 		return GetLastError();
 	hSemaphoreProduce = CreateSemaphore(NULL, size, size, "SemaphoreProduce");

@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <iostream>
 #include <string>
-#include <cstdio>
 #include "SynqQueue.h"
 
 using namespace std;
@@ -9,9 +8,9 @@ using namespace std;
 DWORD WINAPI Producer(SynqQueue *queue);
 DWORD WINAPI Consumer(SynqQueue *queue);
 
-CHAR readyForWorkEvent[] = "ReadyForWork";
-CHAR canStartEventProducer[] = "CanStartEventProducer";
-CHAR canStartEventConsumer[] = "CanStartEventConsumer";
+const CHAR readyForWorkEvent[] = "ReadyForWork";
+const CHAR canStartEventProducer[] = "CanStartEventProducer";
+const CHAR canStartEventConsumer[] = "CanStartEventConsumer";
 
 int main()
 {
@@ -50,8 +49,6 @@ int main()
 		queue.setReadyForWorkEvent(producer_name_c);
 		queue.numberOfThread = i + 1;
 		HANDLE hReadyForWorkEventProducer = CreateEvent(NULL, FALSE, FALSE, producer_name_c);
-		printf("Handle1 : %d\n", hReadyForWorkEventProducer);
-		//printf("name_main_produser : %s\n", producer_name_c);
 		if (hReadyForWorkEventProducer == NULL)
 			return GetLastError();
 		hThreadProducer[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Producer, &queue, 0, &IDThreadProducer[i]);
@@ -70,38 +67,30 @@ int main()
 		CloseHandle(hReadyForWorkEventConsumer);
 	}
 
-	// если здесь, то дождались сигнала на готовность от всех producer и consumer
-	queue.initializeCriticalSection();					// или до создания потоков?
+	queue.initializeCriticalSection();					
 	int hSemaphores = queue.createSemaphores();
 	if (hSemaphores != -1)
 		return hSemaphores;
 
-	//cout << "SetEvent(hCanStartEventProducer)!!!!!!!!\n";
+	for (int i = 0; i < producer_threads; i++)
+	{
+		SetEvent(hCanStartEventProducer); 
+		SetEvent(hCanStartEventConsumer);
+	}
 
-	SetEvent(hCanStartEventProducer); // всем установилось?
 	CloseHandle(hCanStartEventProducer);
-
-	SetEvent(hCanStartEventConsumer);
-	/*for (int i = 0; i <  consumer_threads; i++)
-		SetEvent(hCanStartEventConsumer);*/
 	CloseHandle(hCanStartEventConsumer);
-
-
 	for (int i = 0; i < producer_threads; i++)
 	{
 		WaitForSingleObject(hThreadProducer[i], INFINITE);
-		WaitForSingleObject(hThreadConsumer[i], INFINITE);
-		CloseHandle(hThreadConsumer[i]);
 		CloseHandle(hThreadProducer[i]);
 	}
-	//cout << "!!!!!!!!!!!!!!!SetEvent(hCanStartEventProducer)!!!!!!!!\n";
-
-
-	/*for (int i = 0; i < consumer_threads; i++)
+	for (int i = 0; i < consumer_threads; i++)
 	{
 		WaitForSingleObject(hThreadConsumer[i], INFINITE);
 		CloseHandle(hThreadConsumer[i]);
-	}*/
+	}
+	queue.deleteCriticalSection();
 	delete[] hThreadProducer;
 	delete[] hThreadConsumer;
 
