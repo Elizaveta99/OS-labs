@@ -21,6 +21,7 @@ int main(int args, char** argv)
 	HANDLE *hWritePipe, *hReadPipe;
 	struct Pipe *pipes;
 	string *names;
+
 	hThreadClient = new HANDLE[amount];
 	IDThreadClient = new DWORD[amount];
 	hWritePipe = new HANDLE[amount];

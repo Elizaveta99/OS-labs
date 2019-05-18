@@ -11,6 +11,7 @@ int main(int args, char** argv)
 {
 	cout << "Client " << argv[1] << "\n";
 	cout << "Press 1 to write, 2 to read, 3 to exit\n";
+
 	while (1) 
 	{
 		cout << ">> ";
@@ -28,6 +29,7 @@ int main(int args, char** argv)
 			cout << "Message : ";
 			cin.getline(Message.text, sizeof(Message.text));
 			strcpy(Message.sender, argv[1]);
+
 			// пишем сообщение в анонимный канал
 			DWORD dwBytesWritten;
 			if (!WriteFile(hWritePipe, &Message, sizeof(Message), &dwBytesWritten, NULL))
