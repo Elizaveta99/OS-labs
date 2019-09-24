@@ -1,0 +1,3 @@
+﻿  MainSender.cpp
+c:\users\user\desktop\1studing\os\labs\os-labs\lab3\sender\mainsender.cpp(80): warning C4018: '>=': signed/unsigned mismatch
+  Sender.vcxproj -> C:\Users\User\Desktop\1studing\OS\labs\OS-labs\lab3\Debug\Sender.exe

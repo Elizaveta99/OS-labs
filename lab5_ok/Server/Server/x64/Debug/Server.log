@@ -1,0 +1,4 @@
+﻿  MainServer.cpp
+c:\users\user\desktop\1studing\os\labs\os-labs\lab5_ok\server\server\mainserver.cpp(75): warning C4311: 'type cast': pointer truncation from 'HANDLE' to 'int'
+c:\users\user\desktop\1studing\os\labs\os-labs\lab5_ok\server\server\mainserver.cpp(75): warning C4302: 'type cast': truncation from 'HANDLE' to 'int'
+  Server.vcxproj -> C:\Users\User\Desktop\1studing\OS\labs\OS-labs\lab5_ok\Server\x64\Debug\Server.exe

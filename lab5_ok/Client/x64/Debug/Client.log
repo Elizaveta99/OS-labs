@@ -1,0 +1,4 @@
+﻿  MainClient.cpp
+c:\users\user\desktop\1studing\os\labs\os-labs\lab5_ok\client\mainclient.cpp(21): warning C4312: 'type cast': conversion from 'int' to 'HANDLE' of greater size
+c:\users\user\desktop\1studing\os\labs\os-labs\lab5_ok\client\mainclient.cpp(22): warning C4312: 'type cast': conversion from 'int' to 'HANDLE' of greater size
+  Client.vcxproj -> C:\Users\User\Desktop\1studing\OS\labs\OS-labs\lab5_ok\Server\x64\Debug\Client.exe
